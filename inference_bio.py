@@ -3,7 +3,6 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM, AutoConfig
 
 config = AutoConfig.from_pretrained('./bioBERT/config.json')
 
-#tokenizer = AutoTokenizer.from_pretrained("./bio-bert")
 tokenizer = AutoTokenizer.from_pretrained("./bio-bert/", max_len=512)
 
 model = AutoModelForMaskedLM.from_pretrained("./bio-bert/pytorch_model.bin", config=config)
