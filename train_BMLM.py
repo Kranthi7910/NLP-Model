@@ -3,7 +3,7 @@ from transformers import LineByLineTextDataset
 from transformers import DataCollatorForLanguageModeling
 from transformers import Trainer, TrainingArguments
 
-
+#define the configuration of the model
 config = RobertaConfig(
     vocab_size=52_000,
     max_position_embeddings=514,
@@ -12,15 +12,17 @@ config = RobertaConfig(
     type_vocab_size=1
 )
 
+#recreate the tokenizer in transformers
 tokenizer = RobertaTokenizerFast.from_pretrained("./EsperBERTo", max_len=512)
 
 model = RobertaForMaskedLM(config=config)
 
 print(model.num_parameters())
 
+#building the training dataset
 dataset = LineByLineTextDataset(
     tokenizer=tokenizer,
-    file_path="./Example/Radiation Oncology/*.txt",
+    file_path="./Dataset/*.txt",
     block_size=128,
 )
 
@@ -29,6 +31,7 @@ data_collator = DataCollatorForLanguageModeling(
     tokenizer=tokenizer, mlm=True, mlm_probability=0.15
 )
 
+#initialize the trainer and start training
 training_args = TrainingArguments(
     output_dir="./EsperBERTo",
     overwrite_output_dir=True,
@@ -48,3 +51,6 @@ trainer = Trainer(
 
 trainer.train()
 
+#save the model
+print("TRAINING DONE, SAVING THE MODEL")
+trainer.save_model("./EsperBERTo")
