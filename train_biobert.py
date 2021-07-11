@@ -8,14 +8,14 @@ from transformers import  AutoConfig, AutoTokenizer, AutoModelForMaskedLM
 
 config = AutoConfig.from_pretrained('./bio-bert/config.json')
 
+#recreate the tokenizer in transformers
 tokenizer = RobertaTokenizerFast.from_pretrained("./bio-bert/", max_len=512)
-
-#tokenizer = AutoTokenizer.from_pretrained("./bio-bert/", max_len=512)
 
 model = AutoModelForMaskedLM.from_config(config=config)
 
 print(model.num_parameters())
 
+#building the training dataset
 dataset = LineByLineTextDataset(
     tokenizer=tokenizer,
     file_path="./oscar.eo.txt",
@@ -27,6 +27,7 @@ data_collator = DataCollatorForLanguageModeling(
     tokenizer=tokenizer, mlm=True, mlm_probability=0.15
 )
 
+#initialize the trainer and start training
 training_args = TrainingArguments(
     output_dir="./bio-bert",
     overwrite_output_dir=True,
@@ -46,4 +47,5 @@ trainer = Trainer(
 
 trainer.train()
 
+#save the model
 trainer.save_model("./bio-bert")
